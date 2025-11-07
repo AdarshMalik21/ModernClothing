@@ -1,39 +1,44 @@
 @import "tailwindcss";
 
+@theme {
+    --color-bg: #0E0E10;
+    --color-text: #E5E5E5;
+    --color-accent: #4A6CF7;
 
-:root {
-  --color-bg: #0E0E10;
-  --color-text: #E5E5E5;
-  --color-accent: #4A6CF7;
-
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
+    --font-heading: "Playfair Display", serif;
+    --font-body: "Inter", sans-serif;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-body);
+/* Global defaults */
+html,
+body {
+    @apply bg-bg text-text font-body m-0 p-0;
 }
 
-/* Make headings use Playfair Display */
-h1, h2, h3, h4, h5 {
-  font-family: var(--font-heading);
+h1,
+h2,
+h3,
+h4,
+h5 {
+    @apply font-heading;
 }
 
-/* Default button styling */
-button {
-  background: var(--color-accent);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-}
+/* Navbar Link Glow */
+@layer components {
+    .nav-link {
+        @apply relative transition text-text;
+    }
 
-button:hover {
-  opacity: 0.9;
+    .nav-link::after {
+        content: "";
+        @apply absolute left-0 bottom-[-2px] w-0 h-[2px] bg-accent transition-all duration-300;
+    }
+
+    .nav-link:hover::after {
+        @apply w-full;
+    }
+
+    .nav-link:hover {
+        @apply text-accent drop-shadow-[0_0_6px_#4A6CF7];
+    }
 }
