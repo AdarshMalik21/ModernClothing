@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+
+:root {
+  --color-bg: #0E0E10;
+  --color-text: #E5E5E5;
+  --color-accent: #4A6CF7;
+
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+/* Make headings use Playfair Display */
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-heading);
+}
+
+/* Default button styling */
+button {
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
