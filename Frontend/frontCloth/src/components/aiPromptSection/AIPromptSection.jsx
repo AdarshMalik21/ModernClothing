@@ -101,21 +101,50 @@ const AIPromptSection = () => {
         </p>
 
         {/* Search Bar */}
-        <div className="flex items-center w-full max-w-3xl mx-auto p-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="e.g. Black satin kurta with minimal embroidery..."
-            className="flex-1 px-4 py-2 bg-transparent focus:outline-none text-text placeholder:text-text/60 text-base sm:text-lg"
-          />
-          <button
-            onClick={handleAI}
-            className="ml-2 px-5 py-2 bg-accent hover:bg-accent/80 text-white rounded-full transition text-sm sm:text-base font-medium"
-          >
-            {loading ? "Generating..." : "Generate"}
-          </button>
-        </div>
+        <div className="
+          w-full max-w-3xl mx-auto 
+          bg-white/5 backdrop-blur-md 
+          rounded-2xl border border-white/10 shadow-lg 
+          p-3
+        ">
+
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+
+        {/* Input */}
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="e.g. Black satin kurta with minimal embroidery..."
+          className="
+            flex-1 
+            px-4 py-3 
+            bg-transparent 
+            focus:outline-none 
+            text-text placeholder:text-text/60 
+            text-base sm:text-lg
+            w-full
+          "
+        />
+
+    {/* Button */}
+    <button
+      onClick={handleAI}
+      className="
+        w-full sm:w-auto 
+        px-5 py-3 
+        bg-accent hover:bg-accent/80 
+        text-white 
+        rounded-xl 
+        transition 
+        text-base font-medium
+      "
+    >
+      {loading ? "Generating..." : "Generate"}
+    </button>
+  </div>
+
+</div>
 
         {/* Generated image preview */}
         {imageUrl && (
