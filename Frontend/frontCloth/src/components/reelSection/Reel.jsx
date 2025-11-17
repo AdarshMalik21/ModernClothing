@@ -53,13 +53,13 @@ export default function Reel() {
       <h2 className="text-4xl font-heading text-white mb-8">Trending Styles</h2>
 
       {/* ⚠️ FIXED: Removed overflow scrollbar */}
-      <div className="relative w-[90%] max-w-md h-[75vh] bg-black rounded-3xl shadow-xl 
+      <div className="relative w-[90%] max-w-md aspect-[9/16]  h-[75vh] bg-black rounded-3xl shadow-xl 
                       overflow-hidden select-none">
 
         {/* VIDEO (never causes overflow) */}
         <video
           ref={videoRef}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
           src={currentReel.video}
           playsInline
           muted={!soundOn}

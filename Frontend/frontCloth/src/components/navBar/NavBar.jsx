@@ -10,7 +10,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to="/" className="nav-link">
-          <h1 className="text-2xl font-heading">YourBrand</h1>
+          <h1 className="text-2xl font-heading">Tailor's Mirror</h1>
         </Link>
 
         {/* Desktop Links */}
@@ -32,9 +32,9 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       {open && (
         <div className="md:hidden flex flex-col gap-4 px-6 py-4 bg-white/5 backdrop-blur-xl border-t border-white/10">
-          <a className="nav-link" href="#">Browse</a>
-          <a className="nav-link" href="#">Create</a>
-          <a className="nav-link" href="#">About</a>
+          <Link to="/browse" className="nav-link">Browse</Link>
+          <Link to="/create" className="nav-link">Create</Link>
+          <Link to="/about" className="nav-link">About</Link>
         </div>
       )}
     </nav>

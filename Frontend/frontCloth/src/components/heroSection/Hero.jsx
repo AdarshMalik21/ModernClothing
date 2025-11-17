@@ -20,9 +20,10 @@ const Hero = () => {
     <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
 
       {/* Background Video */}
+      
       <video
         ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover "
         autoPlay
         muted
         loop
