@@ -109,7 +109,7 @@ export default function Reel() {
 
         {/* SHOP NOW */}
         <Link
-          to={currentReel.shopLink}
+          to={`/product/${currentReel.id}`}
           className="
     absolute bottom-6 right-6 
     bg-accent text-white rounded-full font-semibold shadow-lg
