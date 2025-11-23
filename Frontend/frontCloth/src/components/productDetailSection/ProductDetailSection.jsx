@@ -1,61 +1,88 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const ProductDetailSection = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [qty, setQty] = useState(1);
 
-  const sizes = ["S", "M", "L", "XL", "XXL"];
+  // 🔥 NEW — Active Main Image State
+  const [activeImage, setActiveImage] = useState(
+    product.images?.[0]?.image || "/placeholder.png"
+  );
+
+  // If product changes (page loads new product), update active image
+  useEffect(() => {
+    if (product?.images?.length > 0) {
+      setActiveImage(product.images[0].image);
+    }
+  }, [product]);
 
   return (
     <section className="w-full max-w-7xl mx-auto px-6 py-10 md:py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
 
-        {/* LEFT — Product Image */}
-        <div className="relative bg-[rgba(255,255,255,0.02)] rounded-3xl overflow-hidden border border-[rgba(255,255,255,0.08)] backdrop-blur-md p-4">
-          <img
-            src={product?.image || "/placeholder.png"}
-            alt={product?.title}
-            className="w-full h-full object-cover rounded-2xl"
-          />
+        {/* LEFT — Product Images */}
+        <div className="space-y-4">
+          
+          {/* ⭐ MAIN IMAGE (Now Clickable Controlled) */}
+          <div className="bg-[rgba(255,255,255,0.02)] rounded-3xl overflow-hidden border border-[rgba(255,255,255,0.08)] backdrop-blur-md p-4">
+            <img
+              src={activeImage}
+              alt={product.title}
+              className="w-full h-full object-cover rounded-2xl"
+            />
+          </div>
+
+          {/* ⭐ THUMBNAIL IMAGES */}
+          <div className="flex gap-3">
+            {product.images?.map((imgObj, index) => (
+              <img
+                key={index}
+                src={imgObj.image}
+                onClick={() => setActiveImage(imgObj.image)} // 🔥 CLICK TO CHANGE MAIN IMAGE
+                className={`w-24 h-24 object-cover rounded-xl cursor-pointer border ${
+                  activeImage === imgObj.image
+                    ? "border-accent"
+                    : "border-[rgba(255,255,255,0.1)] hover:border-accent"
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* RIGHT — Product Details */}
         <div className="flex flex-col">
-          
-          {/* Title */}
+
+          {/* Product Title */}
           <h1 className="text-3xl md:text-4xl font-heading mb-3 text-text">
-            {product?.title || "Custom Tailored Outfit"}
+            {product.title}
           </h1>
 
           {/* Price */}
           <p className="text-xl text-accent font-semibold mb-6">
-            ₹{product?.price || "5999"}
+            ₹{product.price}
           </p>
 
           {/* Description */}
           <p className="text-[rgba(229,229,229,0.85)] leading-relaxed mb-8">
-            {product?.description ||
-              "A luxury, tailor-crafted outfit made with premium fabrics, custom fit options, and refined detailing. Designed for comfort, durability, and timeless elegance."}
+            {product.description}
           </p>
 
           {/* Size Selector */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium mb-3 text-[rgba(229,229,229,0.9)]">
+            <h3 className="text-sm font-medium mb-3 opacity-90">
               Select Size
             </h3>
 
             <div className="flex gap-3 flex-wrap">
-              {sizes.map((size) => (
+              {product.sizes?.map((size) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
-                  className={`px-4 py-2 rounded-lg border text-sm transition-all
-                    ${
-                      selectedSize === size
-                        ? "bg-accent text-bg border-accent"
-                        : "border-[rgba(255,255,255,0.1)] text-text hover:border-accent"
-                    }
-                  `}
+                  className={`px-4 py-2 rounded-lg border text-sm transition-all ${
+                    selectedSize === size
+                      ? "bg-accent text-bg border-accent"
+                      : "border-[rgba(255,255,255,0.1)] hover:border-accent"
+                  }`}
                 >
                   {size}
                 </button>
@@ -65,7 +92,7 @@ const ProductDetailSection = ({ product }) => {
 
           {/* Quantity Selector */}
           <div className="mb-8">
-            <h3 className="text-sm font-medium mb-3 text-[rgba(229,229,229,0.9)]">
+            <h3 className="text-sm font-medium mb-3 opacity-90">
               Quantity
             </h3>
 
@@ -88,7 +115,7 @@ const ProductDetailSection = ({ product }) => {
             </div>
           </div>
 
-          {/* CTA Buttons */}
+          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mb-10">
             <button className="w-full py-3 rounded-xl bg-accent text-bg font-semibold">
               Add to Cart
@@ -99,31 +126,6 @@ const ProductDetailSection = ({ product }) => {
             </button>
           </div>
 
-          {/* Additional Info */}
-          <div className="space-y-6">
-
-            <div className="bg-[rgba(255,255,255,0.03)] p-4 rounded-xl border border-[rgba(255,255,255,0.05)]">
-              <h4 className="text-sm font-semibold mb-2">Fabric & Material</h4>
-              <p className="text-[rgba(229,229,229,0.7)] text-sm">
-                Premium breathable fabric, fine stitching, eco-friendly dyes.
-              </p>
-            </div>
-
-            <div className="bg-[rgba(255,255,255,0.03)] p-4 rounded-xl border border-[rgba(255,255,255,0.05)]">
-              <h4 className="text-sm font-semibold mb-2">Delivery & Fitting</h4>
-              <p className="text-[rgba(229,229,229,0.7)] text-sm">
-                Standard delivery: 5–7 days • Free alterations available.
-              </p>
-            </div>
-
-            <div className="bg-[rgba(255,255,255,0.03)] p-4 rounded-xl border border-[rgba(255,255,255,0.05)]">
-              <h4 className="text-sm font-semibold mb-2">Customization</h4>
-              <p className="text-[rgba(229,229,229,0.7)] text-sm">
-                Want something unique? Modify colors, fit, embroidery and more.
-              </p>
-            </div>
-
-          </div>
         </div>
       </div>
     </section>
