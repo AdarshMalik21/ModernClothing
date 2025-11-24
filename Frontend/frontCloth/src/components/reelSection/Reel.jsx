@@ -107,6 +107,8 @@ export default function Reel({ mode = "random", categorySlug = null }) {
         className="
           w-[90%] max-w-md h-[75vh] overflow-y-scroll 
           snap-y snap-mandatory scrollbar-hide rounded-3xl bg-black
+          scrollbar-hide
+
         "
       >
         {reels.map((reel, index) => (

@@ -1,6 +1,10 @@
 from rest_framework import generics
-from .models import Product, Category
-from .serializers import ProductSerializer, CategorySerializer
+from .models import MainCategory, Product, Category
+from .serializers import ProductSerializer, CategorySerializer, MainCategorySerializer
+
+class MainCategoryListView(generics.ListAPIView):
+    queryset = MainCategory.objects.all()
+    serializer_class = MainCategorySerializer
 
 class ProductListView(generics.ListAPIView):
     queryset = Product.objects.all().order_by('-created_at')
