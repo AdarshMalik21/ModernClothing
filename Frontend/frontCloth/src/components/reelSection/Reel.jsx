@@ -1,41 +1,81 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaHeart, FaRegHeart, FaBookmark, FaRegBookmark, FaVolumeUp, FaVolumeMute } from "react-icons/fa";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaBookmark,
+  FaRegBookmark,
+  FaVolumeUp,
+  FaVolumeMute,
+} from "react-icons/fa";
 
-import video1 from "../../assets/clothvideo1.mp4";
-import video2 from "../../assets/clothvideo2.mp4";
+import axiosInstance from "../../api/axios";
 
-const reels = [
-  {
-    id: 1,
-    video: video1,
-    shopLink: "/product/1",
-  },
-  {
-    id: 2,
-    video: video2,
-    shopLink: "/product/2",
-  },
-];
-
-export default function Reel() {
+// ⭐ Accept props: mode ("random" or "category") + categorySlug
+export default function Reel({ mode = "random", categorySlug = null }) {
+  const [reels, setReels] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
   const [liked, setLiked] = useState({});
   const [saved, setSaved] = useState({});
   const [soundOn, setSoundOn] = useState(false);
 
-  const videoRef = useRef(null);
+  const videoRefs = useRef([]);
 
-  // Play/Pause sound when user taps volume button
+  // ⭐ Fetch reels once based on mode
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = !soundOn;
-    }
-  }, [soundOn, currentIndex]);
+    let url = "reels/";
 
-  const nextReel = () => {
-    setCurrentIndex((prev) => (prev + 1) % reels.length);
-    setSoundOn(false); // reset sound
+    if (mode === "random") url += "?random=true";
+    if (mode === "category" && categorySlug)
+      url += `?category=${categorySlug}`;
+
+    axiosInstance
+      .get(url)
+      .then((res) => {
+        setReels(res.data);
+      })
+      .catch((err) => console.error("Error fetching reels:", err));
+  }, [mode, categorySlug]);
+
+  // ⭐ Autoplay only the current video
+  useEffect(() => {
+    videoRefs.current.forEach((video, index) => {
+      if (!video) return;
+
+      if (index === currentIndex) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    });
+  }, [currentIndex]);
+
+  // ⭐ Scroll handler for TikTok-style switching
+  const wrapperRef = useRef(null);
+
+  const handleScroll = () => {
+    const container = wrapperRef.current;
+    if (!container) return;
+
+    const scrollPos = container.scrollTop;
+    const fullHeight = container.clientHeight;
+
+    const index = Math.round(scrollPos / fullHeight);
+
+    // update active reel if index changes
+    if (index !== currentIndex) {
+      setCurrentIndex(index);
+      setSoundOn(false);
+    }
+
+    // infinite loop
+    // if (index >= reels.length - 1) {
+    //   setTimeout(() => {
+    //     container.scrollTo({ top: 0, behavior: "smooth" });
+    //     setCurrentIndex(0);
+    //   }, 400);
+    // }
   };
 
   const toggleLike = (id) => {
@@ -46,92 +86,99 @@ export default function Reel() {
     setSaved((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const currentReel = reels[currentIndex];
+  if (reels.length === 0) {
+    return (
+      <section className="w-full flex justify-center items-center py-32">
+        <p className="text-gray-400 text-lg">Loading reels...</p>
+      </section>
+    );
+  }
 
   return (
-    <section className="flex flex-col items-center w-full py-20 bg-bg">
-      <h2 className="text-4xl font-heading text-white mb-8">Trending Styles</h2>
+    <section className="flex flex-col items-center w-full py-10 bg-bg">
+      <h2 className="text-4xl font-heading text-white mb-8">
+        Trending Styles
+      </h2>
 
-      {/* ⚠️ FIXED: Removed overflow scrollbar */}
-      <div className="relative w-[90%] max-w-md aspect-[9/16]  h-[75vh] bg-black rounded-3xl shadow-xl 
-                      overflow-hidden select-none">
-
-        {/* VIDEO (never causes overflow) */}
-        <video
-          ref={videoRef}
-          className="w-full h-full object-contain"
-          src={currentReel.video}
-          playsInline
-          muted={!soundOn}
-          loop
-          autoPlay
-        />
-
-        {/* RIGHT BUTTONS */}
-        <div className="absolute right-4 top-[25%] flex flex-col items-center gap-6 text-white">
-
-          {/* LIKE */}
-          <button
-            onClick={() => toggleLike(currentReel.id)}
-            className="text-3xl drop-shadow-lg"
+      {/* ⭐ Vertical Scroll Container */}
+      <div
+        ref={wrapperRef}
+        onScroll={handleScroll}
+        className="
+          w-[90%] max-w-md h-[75vh] overflow-y-scroll 
+          snap-y snap-mandatory scrollbar-hide rounded-3xl bg-black
+        "
+      >
+        {reels.map((reel, index) => (
+          <div
+            key={reel.id}
+            className="
+              snap-start w-full h-[75vh] relative 
+              flex justify-center items-center select-none
+            "
           >
-            {liked[currentReel.id] ? (
-              <FaHeart className="text-red-500" />
-            ) : (
-              <FaRegHeart />
-            )}
-          </button>
+            {/* VIDEO */}
+            <video
+              ref={(el) => (videoRefs.current[index] = el)}
+              className="w-full h-full object-contain"
+              src={reel.video}
+              muted={!soundOn}
+              loop
+              playsInline
+            />
 
-          {/* SAVE */}
-          <button
-            onClick={() => toggleSave(currentReel.id)}
-            className="text-3xl drop-shadow-lg"
-          >
-            {saved[currentReel.id] ? (
-              <FaBookmark className="text-accent" />
-            ) : (
-              <FaRegBookmark />
-            )}
-          </button>
+            {/* RIGHT BUTTONS */}
+            <div className="absolute right-4 top-[25%] flex flex-col items-center gap-6 text-white">
+              {/* LIKE */}
+              <button
+                onClick={() => toggleLike(reel.id)}
+                className="text-3xl drop-shadow-lg"
+              >
+                {liked[reel.id] ? (
+                  <FaHeart className="text-red-500" />
+                ) : (
+                  <FaRegHeart />
+                )}
+              </button>
 
-          {/* SOUND (plays only when tapped) */}
-          <button
-            onClick={() => setSoundOn(!soundOn)}
-            className="text-3xl drop-shadow-lg"
-          >
-            {soundOn ? (
-              <FaVolumeUp className="text-white" />
-            ) : (
-              <FaVolumeMute className="text-white" />
-            )}
-          </button>
-        </div>
+              {/* SAVE */}
+              <button
+                onClick={() => toggleSave(reel.id)}
+                className="text-3xl drop-shadow-lg"
+              >
+                {saved[reel.id] ? (
+                  <FaBookmark className="text-accent" />
+                ) : (
+                  <FaRegBookmark />
+                )}
+              </button>
 
-        {/* SHOP NOW */}
-        <Link
-          to={`/product/${currentReel.id}`}
-          className="
-    absolute bottom-6 right-6 
-    bg-accent text-white rounded-full font-semibold shadow-lg
-    transition hover:bg-accent/80
+              {/* SOUND */}
+              <button
+                onClick={() => setSoundOn(!soundOn)}
+                className="text-3xl drop-shadow-lg"
+              >
+                {soundOn ? (
+                  <FaVolumeUp className="text-white" />
+                ) : (
+                  <FaVolumeMute className="text-white" />
+                )}
+              </button>
+            </div>
 
-    /* 🔥 RESPONSIVE FIX */
-    px-3 py-1.5 text-xs scale-90
-    sm:px-4 sm:py-2 sm:text-sm sm:scale-100
-    md:px-6 md:py-2.5 md:text-base
-  "
-        >
-          Shop Now
-        </Link>
-
-        {/* NEXT BUTTON */}
-        <button
-          onClick={nextReel}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-white/20 
-                     text-white rounded-full text-sm backdrop-blur-md hover:bg-white/30 transition"
-        >
-          Next ⬇
-        </button>
+            {/* SHOP NOW */}
+            <Link
+              to={`/product/${reel.product.id}`}
+              className="
+                absolute bottom-6 right-6 
+                bg-accent text-white rounded-full font-semibold shadow-lg
+                px-4 py-2 text-sm hover:bg-accent/80 transition
+              "
+            >
+              Shop Now
+            </Link>
+          </div>
+        ))}
       </div>
     </section>
   );

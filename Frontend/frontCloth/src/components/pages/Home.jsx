@@ -12,7 +12,7 @@ const Home = () => {
     <Hero />
     <HowItWorkSection />
     <AIPromptSection />
-    <Reel />
+    <Reel mode="random"/>
     <Testimonials />
     <Footer />
     </>

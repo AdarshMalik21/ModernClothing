@@ -114,17 +114,14 @@ const Browse = () => {
       </div>
 
       {/* --------------------- Reels Preview Section --------------------- */}
-      <div className="mt-16">
-        <h2 className="text-2xl mb-4 font-heading">Trending Reels</h2>
-        <div className="w-full overflow-x-auto scrollbar-hide whitespace-nowrap py-4">
-          {/* Use your existing Reel component or create a compact version */}
-          <div className="inline-flex gap-6">
-            <Reel compact />
-            <Reel compact />
-            <Reel compact />
+      {/* --------------------- Category Reels Section --------------------- */}
+        {selectedCategory !== "all" && (
+          <div className="mt-20">
+            <h2 className="text-2xl mb-4 font-heading">Trending Reels</h2>
+            <Reel mode="category" categorySlug={selectedCategory} />
           </div>
-        </div>
-      </div>
+        )}
+
 
     </div>
     <About />

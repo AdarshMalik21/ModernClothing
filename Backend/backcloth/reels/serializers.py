@@ -9,7 +9,7 @@ class ReelSerializer(serializers.ModelSerializer):
         model = Reel
         fields = ["id",
             "video",
-            "caption",
+            
             "created_at",
             "likes",
             "product",
